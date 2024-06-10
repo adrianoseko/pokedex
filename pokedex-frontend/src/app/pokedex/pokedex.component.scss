@@ -1,0 +1,56 @@
+// spinner style
+
+:host ::ng-deep .custom-spinner .p-progress-spinner-circle {
+    animation: none;
+    stroke: #000;
+}
+
+.frames {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 600px;
+    margin-top: 20px;
+}
+
+.p-progress-spinner-circle {
+    stroke: black;
+}
+
+:host ::ng-deep .custom-spinner .p-progress-spinner-circle {
+    animation: custom-progress-spinner-color;
+    width: 100% !important;
+    height: 70px !important;
+    margin-top: 60% !important;
+}
+
+
+@keyframes p-progress-spinner-color {
+
+    100%,
+    0% {
+        stroke: black !important;
+    }
+
+    40% {
+        stroke: gray !important;
+    }
+
+    66% {
+        stroke: black !important;
+    }
+
+    80%,
+    90% {
+        stroke: gray !important;
+    }
+}
+
+.font-logo {
+    text-decoration: none;
+    width: 100%;
+    color: white;
+    text-align: center !important;
+    font-family: "Russo One";
+    font-size: larger;
+    text-transform: uppercase;
+}

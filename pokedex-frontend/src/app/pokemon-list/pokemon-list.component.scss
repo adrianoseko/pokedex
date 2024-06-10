@@ -1,0 +1,173 @@
+// spinner style
+
+:host ::ng-deep .custom-spinner .p-progress-spinner-circle {
+    animation: none;
+    stroke: #000;
+}
+
+.frames {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 600px;
+    margin-top: 20px;
+}
+
+.p-progress-spinner-circle {
+    stroke: black;
+}
+
+:host ::ng-deep .custom-spinner .p-progress-spinner-circle {
+    animation: custom-progress-spinner-color;
+    width: 100% !important;
+    height: 70px !important;
+    margin-top: 60% !important;
+}
+
+
+@keyframes p-progress-spinner-color {
+
+    100%,
+    0% {
+        stroke: black !important;
+    }
+
+    40% {
+        stroke: gray !important;
+    }
+
+    66% {
+        stroke: black !important;
+    }
+
+    80%,
+    90% {
+        stroke: gray !important;
+    }
+}
+
+.spin-container {
+    width: 100%;
+    height: 100%;
+    margin-top: auto;
+    margin-bottom: auto;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.contract1 {
+    margin-left: 80%;
+    background: rgb(255, 0, 0);
+    border-radius: 50%;
+    width: 10px;
+    height: 10px;
+
+}
+
+.contract2 {
+    margin-left: 80%;
+    background: rgb(255, 213, 1);
+    border-radius: 50%;
+    width: 10px;
+    height: 10px;
+
+}
+
+.contract3 {
+    margin-left: 80%;
+    background: rgb(0, 98, 255);
+    border-radius: 50%;
+    width: 10px;
+    height: 10px;
+}
+
+@keyframes fa-blink {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+.fa-blink {
+    -webkit-animation: fa-blink 0.75s linear infinite;
+    -moz-animation: fa-blink 0.75s linear infinite;
+    -ms-animation: fa-blink 0.75s linear infinite;
+    -o-animation: fa-blink 0.75s linear infinite;
+    animation: fa-blink 0.75s linear infinite;
+}
+
+
+@keyframes fa-blink2 {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+.fa-blink2 {
+    -webkit-animation: fa-blink 1.5s linear infinite;
+    -moz-animation: fa-blink 1.5s linear infinite;
+    -ms-animation: fa-blink 1.5s linear infinite;
+    -o-animation: fa-blink 1.5s linear infinite;
+    animation: fa-blink 1.5s linear infinite;
+}
+
+.circulo {
+    background: rgba(254, 254, 254, 0);
+    border-radius: 50%;
+    width: 10px;
+    height: 10px;
+
+}
+
+.circulo1 {
+    font-size: small !important;
+    margin-top: 0.5%;
+    background: rgb(255, 0, 0);
+    border-radius: 50%;
+    width: 10px;
+    height: 10px;
+
+}
+
+.circulo2 {
+    font-size: small !important;
+    margin-top: 0.5%;
+    background: rgb(255, 213, 1);
+    border-radius: 50%;
+    width: 10px;
+    height: 10px;
+
+}
+
+.circulo3 {
+    font-size: small !important;
+    margin-top: 0.5%;
+    background: rgb(0, 98, 255);
+    border-radius: 50%;
+    width: 10px;
+    height: 10px;
+}
+
+.font-logo {
+    text-decoration: none;
+    width: 100%;
+    color: white;
+    text-align: center !important;
+    font-family: "Russo One";
+    font-size: larger;
+    text-transform: uppercase;
+}

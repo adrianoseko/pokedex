@@ -1,0 +1,327 @@
+/* You can add global styles to this file, and also import other style files */
+@import "primeicons/primeicons.css";
+
+body {
+    float: left;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background: #f1f5f7;
+}
+
+.card {
+    background: var(--surface-card);
+    padding: 2rem;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+}
+
+
+h1,
+h2,
+h3,
+h4,
+h5,
+label {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+        Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    text-align: left;
+    margin: 0;
+    padding: 0;
+}
+
+hr.style-visao360 {
+    color: #b41f37;
+    background: #b41f37;
+}
+
+.p-text-center {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+        Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    text-align: center;
+    font-size: 25px;
+}
+
+.link-login {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+        Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    text-align: center;
+    font-size: 15px;
+    margin: 0 0 0 10px;
+}
+
+#recuperar-senha {
+    width: 156px;
+    margin: 0 auto;
+    display: block;
+}
+
+#btn-login {
+    width: 200px;
+    font-weight: 600;
+    margin: 40px auto;
+    display: block;
+    padding: 10px 0;
+    background-color: #ced4da;
+    border: #6c757d;
+}
+
+
+#login-area {
+    background: url(/assets/imgs/layout-login.jpg) no-repeat scroll center 0px / cover;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    background-color: #f1f5f3;
+    right: 0;
+}
+
+#login-area-content {
+    position: absolute;
+    width: 33%;
+    height: 100%;
+    //background: #f1f5f7;
+    //box-shadow: 12px -5px 5px -13px #000;
+    z-index: 3;
+}
+
+.global-login-area {
+    width: none;
+    height: 100%;
+    position: absolute;
+    background-color: rgba(30, 30, 30, 0.56);
+    right: 0;
+    z-index: 3;
+}
+
+img.logo-login {
+    width: 143px;
+    height: auto;
+    text-align: center;
+    margin: 25% auto 10%;
+    display: block;
+}
+
+.passdw {
+    display: inline-grid;
+    width: 100%;
+}
+
+.p-inputgroup.login-size {
+    display: flex;
+    align-items: stretch;
+    width: 80%;
+    margin: 0 auto;
+}
+
+.p-menubar {
+    padding: 0.5rem;
+    background: #000000 !important;
+    color: #fff !important;
+    border: 0px !important;
+    border-radius: 0px !important;
+}
+
+.p-menubar .p-menubar-root-list>.p-menuitem>.p-menuitem-link .p-menuitem-icon {
+    color: #fff !important;
+    margin-right: 0.5rem;
+}
+
+.p-menubar .p-menubar-root-list>.p-menuitem>.p-menuitem-link .p-menuitem-text {
+    color: inherit !important;
+    color: #ffffff !important;
+}
+
+.p-datatable .p-datatable-tbody>tr>td {
+    text-align: left;
+    border: 1px solid #e9ecef;
+    border-width: 0 0 1px 0;
+    padding: 0.05rem 0rem !important;
+}
+
+.p-datatable .p-datatable-tbody>tr>td.set-cast-button {
+    width: auto !important;
+    display: inline-flex;
+}
+
+.p-datatable .p-datatable-thead>tr>th {
+    text-align: center !important;
+    padding: 2px 1px !important;
+    border: 1px solid #e9ecef;
+    border-width: 0 0 1px 0;
+    font-weight: 600;
+    color: #495057;
+    background: #f8f9fa;
+    transition: box-shadow 0.2s;
+    font-size: 10.5px;
+}
+
+.p-button.p-button-icon-only.p-button-rounded {
+    border-radius: 26% !important;
+    height: 1.8em !important;
+    width: 30px !important;
+    padding: 2px !important;
+    margin: 0 auto;
+}
+
+.pi {
+    font-size: 0.7rem !important;
+}
+
+.p-menubar .p-menubar-root-list>.p-menuitem>.p-menuitem-link:not(.p-disabled):hover,
+.p-menubar .p-menubar-root-list>.p-menuitem>.p-menuitem-link:not(.p-disabled):active,
+.p-menubar .p-menubar-root-list>.p-menuitem>.p-menuitem-link:not(.p-disabled):focus {
+    background: #46423ff8 !important;
+    box-shadow: inherit !important;
+}
+
+.p-menubar ul li:nth-child(1) .pi-info-circle:before {
+    content: "\e924";
+    color: #ecd429;
+}
+
+.p-menubar ul li:nth-child(2) .pi-th-large:before {
+    content: "\e918";
+    color: #ff4c4c !important;
+}
+
+.p-menubar ul li:nth-child(3) .pi-cog:before {
+    content: "\e94a";
+    color: #27e6ec !important;
+}
+
+.p-menubar .p-menuitem {
+    position: relative;
+    margin: 0 15px 0 0;
+}
+
+#header_table_1 .p-field {
+    float: left;
+    margin: 0 15px 0 0;
+}
+
+.p-panel .p-panel-header {
+    border: 0px;
+    padding: 1rem;
+    background: #000000;
+    color: #495057;
+    border-top-right-radius: 0px;
+    border-top-left-radius: 0px;
+    display: none;
+}
+
+.p-slidemenu {
+    width: inherit !important;
+    min-width: 15em !important;
+}
+
+
+.p-slidemenu .p-slidemenu-rootlist {
+    position: absolute;
+    top: 0;
+    width: auto !important;
+}
+
+@media screen and (max-width: 489px) {
+    .p-formgroup-inline {
+        .p-field {
+            margin-bottom: 1em !important;
+        }
+    }
+
+    .global-login-area {
+        width: 100%;
+    }
+
+    .font-logo {
+        color: white !important;
+    }
+
+    #login-area {
+        background: none;
+        background-color: black;
+    }
+}
+
+.layout-content .content-section.implementation>h3 {
+    font-weight: 600;
+}
+
+textarea {
+    resize: none;
+}
+
+
+
+/* Works on Firefox */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(0, 0, 0) rgb(253, 253, 252);
+}
+
+/* Works on Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+    width: 5px;
+}
+
+*::-webkit-scrollbar-track {
+    background: rgb(235, 235, 235);
+}
+
+*::-webkit-scrollbar-thumb {
+    background-color: rgb(0, 0, 0);
+    border-radius: 20px;
+    border: 1px solid rgb(233, 232, 230);
+}
+
+
+
+.p-fieldset .p-fieldset-content {
+    padding: 0 !important;
+}
+
+
+h1.ng-star-inserted {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+app-usage-charts>div>div {
+    float: left;
+}
+
+app-competition-table>div {
+    width: 500px !important;
+    box-shadow: 2px 2px 2px #b3b3b3;
+    display: block;
+}
+
+app-usage-charts {
+    display: block;
+    margin: 57px 0 0 0;
+}
+
+
+p-tabpanel .p-tabview-panel>div:nth-child(2) {
+    margin-left: inherit;
+    margin-right: inherit;
+    width: 68%;
+    position: absolute;
+    top: 1321px;
+}
+
+app-arena {
+    margin: 0 !important;
+    opacity: none !important;
+    display: block;
+    height: 199px;
+
+}
+
+
+#arena-area {
+    margin: 0px 26% !important;
+    opacity: none;
+    padding: 45px 12px 0 0px !important;
+}

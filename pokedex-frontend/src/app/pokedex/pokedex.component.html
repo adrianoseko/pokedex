@@ -1,0 +1,24 @@
+<div
+    style="width: 100%; display: flex; background-color: #333; color: #fff; padding: 10px 0; font-family: Russo One; font-size: large;">
+    <a href="/pokemon-list" style="margin: 0 10px; text-decoration: none; color: #fff;">Pesquisar Pokemons</a>
+</div>
+
+<div
+    style="width: 100%; display: flex; justify-content: center; align-items: center; margin-top: 1%; font-family: Russo One; font-size: xx-large;">
+    <p>Pokedex</p>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; justify-content: center;">
+    <div *ngFor="let pokemon of pokedex"
+        style="width: 100%; border: 1px solid #ccc; border-radius: 10px; margin-bottom: 20px;">
+        <p-card>
+            <div style="margin: 5%; font-family: Russo One;">
+                <p style="font-size: x-large;">{{ pokemon.name }}</p>
+                <img [src]="pokemon.image" style="font-family: 'Russo One'; width: 100%;">
+                <p>Height: {{ pokemon.height }}</p>
+                <p>Weight: {{ pokemon.weight }}</p>
+                <p>Base Experience: {{ pokemon.base_experience }}</p>
+            </div>
+        </p-card>
+    </div>
+</div>

@@ -1,0 +1,37 @@
+<div
+    style="width: 100%; display: flex; background-color: #333; color: #fff; padding: 10px 0; font-family: Russo One; font-size: large;">
+    <a href="/" style="margin: 0 10px; text-decoration: none; color: #fff;">Pokedex</a>
+</div>
+
+<div style="margin: 5%;">
+    <p-table [value]="pokemons" [paginator]="true" [rows]="20" [tableStyle]="{ 'min-width': '50rem' }"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+        [rowsPerPageOptions]="[5, 10, 20]" [globalFilterFields]="['name']">
+        <ng-template pTemplate="caption">
+            <div class="flex">
+                <span class="p-input-icon-left ml-auto">
+                    <i class="pi pi-search"></i>
+                    <input pInputText type="text" (input)="dt1.filterGlobal($event.target.value, 'contains')"
+                        placeholder="Pesquisar" />
+                </span>
+            </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr>
+                <th pSortableColum="name" style=" font-family: Russo One;">Name</th>
+                <th style=" font-family: Russo One;">Url API Base</th>
+                <th></th>
+
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-pokemon>
+            <tr>
+                <td style="text-align: center; font-family: Russo One;">{{ pokemon.name }}</td>
+                <td style="text-align: center; font-family: Russo One;">{{ pokemon.url }}</td>
+                <td>
+                    <p-button icon="pi pi-search" (click)="pokemonPage(pokemon.url)"></p-button>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
