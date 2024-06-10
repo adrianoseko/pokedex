@@ -4,7 +4,7 @@
 </div>
 
 <div style="margin: 5%;">
-    <p-table [value]="pokemons" [paginator]="true" [rows]="20" [tableStyle]="{ 'min-width': '50rem' }"
+    <p-table #dt [value]="pokemons" [paginator]="true" [rows]="20" [tableStyle]="{ 'min-width': '50rem' }"
         currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
         [rowsPerPageOptions]="[5, 10, 20]" [globalFilterFields]="['name']">
         <ng-template pTemplate="caption">
