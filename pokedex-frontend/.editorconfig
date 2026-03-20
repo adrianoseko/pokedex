@@ -1,6 +1,8 @@
-# Editor configuration, see https://editorconfig.org
+# Editor configuration
+# See https://editorconfig.org for details
 root = true
 
+# Global settings for all files
 [*]
 charset = utf-8
 indent_style = space
@@ -8,9 +10,11 @@ indent_size = 2
 insert_final_newline = true
 trim_trailing_whitespace = true
 
+# TypeScript files
 [*.ts]
 quote_type = single
 
+# Markdown files
 [*.md]
 max_line_length = off
 trim_trailing_whitespace = false
