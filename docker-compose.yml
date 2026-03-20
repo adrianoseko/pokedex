@@ -1,5 +1,16 @@
-version '3.8'
+version: "3.8"
 
-services pokemon-api build context . dockerfile Dockerfile-api ports - 8000
+services:
+  pokemon-api:
+    build:
+      context: .
+      dockerfile: Dockerfile-api
+    ports:
+      - "8000:8000"
 
-pokemon-frontend build context . dockerfile Dockerfile-frontend ports - 4200
+  pokemon-frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile-frontend
+    ports:
+      - "4200:4200"
