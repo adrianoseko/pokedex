@@ -1,37 +1,85 @@
-<div
-    style="width: 100%; display: flex; background-color: #333; color: #fff; padding: 10px 0; font-family: Russo One; font-size: large;">
-    <a href="/" style="margin: 0 10px; text-decoration: none; color: #fff;">Pokedex</a>
+<style>
+  :host {
+    display: block;
+  }
+
+  .app-header {
+    width: 100%;
+    display: flex;
+    background-color: #333;
+    color: #fff;
+    padding: 10px 0;
+    font-family: "Russo One", sans-serif;
+    font-size: large;
+  }
+
+  .app-header .brand {
+    margin: 0 10px;
+    text-decoration: none;
+    color: #fff;
+  }
+
+  .container {
+    margin: 5%;
+  }
+
+  /* Keep table minimum width via inline tableStyle binding in template; this rule is complimentary */
+  .caption {
+    display: flex;
+  }
+
+  .caption .search-wrapper {
+    margin-left: auto;
+  }
+
+  .table-cell {
+    text-align: center;
+    font-family: "Russo One", sans-serif;
+  }
+
+  .visually-empty {
+    /* placeholder for the empty header column (actions) */
+  }
+</style>
+
+<div class="app-header" role="banner">
+  <a href="/" class="brand">Pokedex</a>
 </div>
 
-<div style="margin: 5%;">
-    <p-table #dt [value]="pokemons" [paginator]="true" [rows]="20" [tableStyle]="{ 'min-width': '50rem' }"
-        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-        [rowsPerPageOptions]="[5, 10, 20]" [globalFilterFields]="['name']">
-        <ng-template pTemplate="caption">
-            <div class="flex">
-                <span class="p-input-icon-left ml-auto">
-                    <i class="pi pi-search"></i>
-                    <input pInputText type="text" (input)="dt1.filterGlobal($event.target.value, 'contains')"
-                        placeholder="Pesquisar" />
-                </span>
-            </div>
-        </ng-template>
-        <ng-template pTemplate="header">
-            <tr>
-                <th pSortableColum="name" style=" font-family: Russo One;">Name</th>
-                <th style=" font-family: Russo One;">Url API Base</th>
-                <th></th>
+<div class="container">
+  <p-table #dt [value]="pokemons" [paginator]="true" [rows]="20" [tableStyle]="{ 'min-width': '50rem' }"
+    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+    [rowsPerPageOptions]="[5, 10, 20]" [globalFilterFields]="['name']">
 
-            </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-pokemon>
-            <tr>
-                <td style="text-align: center; font-family: Russo One;">{{ pokemon.name }}</td>
-                <td style="text-align: center; font-family: Russo One;">{{ pokemon.url }}</td>
-                <td>
-                    <p-button icon="pi pi-search" (click)="pokemonPage(pokemon.url)"></p-button>
-                </td>
-            </tr>
-        </ng-template>
-    </p-table>
+    <ng-template pTemplate="caption">
+      <div class="caption">
+        <span class="p-input-icon-left ml-auto search-wrapper">
+          <i class="pi pi-search" aria-hidden="true"></i>
+          <!-- kept original filter call (dt1) to preserve existing behaviour -->
+          <input pInputText type="text" (input)="dt1.filterGlobal($event.target.value, 'contains')"
+            placeholder="Pesquisar" aria-label="Pesquisar" />
+        </span>
+      </div>
+    </ng-template>
+
+    <ng-template pTemplate="header">
+      <tr>
+        <!-- kept original attribute name pSortableColum to preserve existing behaviour -->
+        <th pSortableColum="name" class="table-cell">Name</th>
+        <th class="table-cell">Url API Base</th>
+        <th class="visually-empty"></th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-pokemon>
+      <tr>
+        <td class="table-cell">{{ pokemon.name }}</td>
+        <td class="table-cell">{{ pokemon.url }}</td>
+        <td>
+          <p-button icon="pi pi-search" (click)="pokemonPage(pokemon.url)"></p-button>
+        </td>
+      </tr>
+    </ng-template>
+
+  </p-table>
 </div>
