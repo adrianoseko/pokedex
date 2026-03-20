@@ -1,4 +1,9 @@
-/* To learn more about this file see: https://angular.io/config/tsconfig. */
+/*
+  TypeScript configuration for end-to-end (e2e) tests.
+  This file extends the project's base tsconfig and provides compiler
+  options specific to the e2e test environment.
+  For more details: https://angular.io/config/tsconfig
+*/
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
