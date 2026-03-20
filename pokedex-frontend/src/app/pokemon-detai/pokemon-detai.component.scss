@@ -1,56 +1,66 @@
 // spinner style
 
-:host ::ng-deep .custom-spinner .p-progress-spinner-circle {
-    animation: none;
-    stroke: #000;
+// Color and sizing variables for easier maintenance
+$stroke-color: black;
+$stroke-alt-color: gray;
+$spinner-width: 100%;
+$spinner-height: 70px;
+$spinner-margin-top: 60%;
+$frames-max-width: 600px;
+
+// Scoped spinner rules (kept selector specificity and animation name to preserve behavior)
+:host ::ng-deep {
+  .custom-spinner {
+    .p-progress-spinner-circle {
+      // NOTE: The original code set this animation name while the keyframes used a different name.
+      // To preserve exact behavior we keep the same (potentially mismatched) animation name.
+      animation: custom-progress-spinner-color;
+      stroke: $stroke-color;
+      width: $spinner-width !important;
+      height: $spinner-height !important;
+      margin-top: $spinner-margin-top !important;
+    }
+  }
+}
+
+// Keep global class for spinner circle stroke as in original
+.p-progress-spinner-circle {
+  stroke: $stroke-color;
 }
 
 .frames {
-    margin-left: auto;
-    margin-right: auto;
-    max-width: 600px;
-    margin-top: 20px;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: $frames-max-width;
+  margin-top: 20px;
 }
-
-.p-progress-spinner-circle {
-    stroke: black;
-}
-
-:host ::ng-deep .custom-spinner .p-progress-spinner-circle {
-    animation: custom-progress-spinner-color;
-    width: 100% !important;
-    height: 70px !important;
-    margin-top: 60% !important;
-}
-
 
 @keyframes p-progress-spinner-color {
+  100%,
+  0% {
+    stroke: $stroke-color !important;
+  }
 
-    100%,
-    0% {
-        stroke: black !important;
-    }
+  40% {
+    stroke: $stroke-alt-color !important;
+  }
 
-    40% {
-        stroke: gray !important;
-    }
+  66% {
+    stroke: $stroke-color !important;
+  }
 
-    66% {
-        stroke: black !important;
-    }
-
-    80%,
-    90% {
-        stroke: gray !important;
-    }
+  80%,
+  90% {
+    stroke: $stroke-alt-color !important;
+  }
 }
 
 .font-logo {
-    text-decoration: none;
-    width: 100%;
-    color: white;
-    text-align: center !important;
-    font-family: "Russo One";
-    font-size: larger;
-    text-transform: uppercase;
+  text-decoration: none;
+  width: 100%;
+  color: white;
+  text-align: center !important;
+  font-family: "Russo One";
+  font-size: larger;
+  text-transform: uppercase;
 }
