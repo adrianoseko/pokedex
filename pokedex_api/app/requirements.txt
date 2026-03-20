@@ -1,5 +1,8 @@
+# Requirements for pokedex_api application
+# Unpinned package versions are kept intentionally to preserve original behavior
+
 fastapi
 httpx
+pydantic
 uvicorn
 xmltodict
-pydantic
