@@ -2,7 +2,18 @@
 // `ng build --prod` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 
-export const environment = {
+export interface Environment {
+  /** Flag that indicates whether the build is a production build. */
+  production: boolean;
+}
+
+/**
+ * Application environment configuration.
+ *
+ * Keep values simple and serializable. This file is replaced at build time
+ * for production builds per angular.json configuration.
+ */
+export const environment: Readonly<Environment> = {
   production: false
 };
 
