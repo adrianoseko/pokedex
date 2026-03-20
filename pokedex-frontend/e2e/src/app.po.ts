@@ -1,11 +1,21 @@
-import { browser, by, element } from 'protractor';
+import { browser, by, element, ElementFinder } from 'protractor';
 
 export class AppPage {
-  async navigateTo(): Promise<unknown> {
+  // Centralized selector for the title element
+  private readonly TITLE_SELECTOR = 'app-root .content span';
+
+  /**
+   * Navigate to the configured base URL.
+   */
+  async navigateTo(): Promise<void> {
     return browser.get(browser.baseUrl);
   }
 
+  /**
+   * Get the text of the app title element.
+   */
   async getTitleText(): Promise<string> {
-    return element(by.css('app-root .content span')).getText();
+    const titleElement: ElementFinder = element(by.css(this.TITLE_SELECTOR));
+    return titleElement.getText();
   }
 }
