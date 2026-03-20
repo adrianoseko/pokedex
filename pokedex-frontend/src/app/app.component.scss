@@ -1,14 +1,40 @@
+// Refactored SCSS for post items and background
+// Improvements: variables, mixins, clearer structure — behavior preserved
+
+$img-width: 100px;
+$img-width-sm: 50px;
+$image-height-skeleton: 66px;
+$title-skeleton-width: 150px;
+$skeleton-height: 14px;
+$badge-width: 100px;
+$h6-skeleton-width: 25px;
+$shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+$padding: 1rem;
+$pulse-duration: 1s;
+$breakpoint-sm: 960px;
+$bg-image-url: '/assets/imgs/background.jpg';
+
+// Mixin to apply the skeleton pulse style consistently
+@mixin pulse-box($w, $h, $display: null) {
+  width: $w;
+  height: $h;
+  @if $display != null {
+    display: $display;
+  }
+  animation: pulse $pulse-duration infinite ease-in-out;
+}
+
 .post-item {
     display: flex;
     align-items: center;
-    padding: 1rem;
+    padding: $padding;
     width: 100%;
     flex-wrap: nowrap;
 
     img {
-        width: 100px;
-        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
-        margin-right: 1rem;
+        width: $img-width;
+        box-shadow: $shadow;
+        margin-right: $padding;
     }
 
     .post-list-detail {
@@ -40,48 +66,44 @@
 
     &.loading-item {
         .image-container {
-            width: 100px;
-            height: 66px;
-            animation: pulse 1s infinite ease-in-out;
-            margin-right: 1rem;
+            // Keep same size and visual behavior as original skeleton
+            @include pulse-box($img-width, $image-height-skeleton);
+            margin-right: $padding;
         }
 
         .post-list-detail {
 
             h5,
             .post-category {
-                width: 150px;
-                height: 14px;
-                display: block;
-                animation: pulse 1s infinite ease-in-out;
+                // Title/category skeleton blocks
+                @include pulse-box($title-skeleton-width, $skeleton-height, block);
             }
         }
 
         .post-list-action {
             .post-badge {
-                display: block;
-                width: 100px;
-                height: 14px;
-                animation: pulse 1s infinite ease-in-out;
+                // Badge skeleton block
+                @include pulse-box($badge-width, $skeleton-height, block);
             }
 
             h6 {
-                width: 25px;
-                height: 14px;
-                animation: pulse 1s infinite ease-in-out;
+                // Small skeleton for h6; keep display unchanged to preserve layout
+                width: $h6-skeleton-width;
+                height: $skeleton-height;
+                animation: pulse $pulse-duration infinite ease-in-out;
             }
         }
     }
 }
 
-@media screen and (max-width: 960px) {
+@media screen and (max-width: #{$breakpoint-sm}) {
     .post-item {
         h5 {
             font-size: 1rem;
         }
 
         img {
-            width: 50px;
+            width: $img-width-sm;
         }
 
         .post-category-icon,
@@ -92,7 +114,7 @@
 }
 
 .bgd {
-    background: #ffffff url("/assets/imgs/background.jpg");
+    background: #ffffff url(#{$bg-image-url});
     width: 100%;
     position: absolute;
     min-height: 100%;
