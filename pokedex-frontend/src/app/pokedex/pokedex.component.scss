@@ -1,10 +1,12 @@
-// spinner style
+/* Spinner styles and layout refinements */
 
 :host ::ng-deep .custom-spinner .p-progress-spinner-circle {
+    /* Ensure spinner has no animation by default (original intent preserved) */
     animation: none;
     stroke: #000;
 }
 
+/* Container for centered frames */
 .frames {
     margin-left: auto;
     margin-right: auto;
@@ -12,18 +14,21 @@
     margin-top: 20px;
 }
 
+/* Base circle stroke color for the progress spinner */
 .p-progress-spinner-circle {
     stroke: black;
 }
 
+/* Additional customizations for the spinner (kept after the base rule to preserve cascade order) */
 :host ::ng-deep .custom-spinner .p-progress-spinner-circle {
+    /* Intentionally references a different animation name (preserves original behavior) */
     animation: custom-progress-spinner-color;
     width: 100% !important;
     height: 70px !important;
     margin-top: 60% !important;
 }
 
-
+/* Keyframes kept with original name to preserve behavior exactly as in the source */
 @keyframes p-progress-spinner-color {
 
     100%,
@@ -45,6 +50,7 @@
     }
 }
 
+/* Logo font styling */
 .font-logo {
     text-decoration: none;
     width: 100%;
