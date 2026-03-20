@@ -1,17 +1,15 @@
 /**
- * This file includes polyfills needed by Angular and is loaded before the app.
- * You can add your own extra polyfills to this file.
+ * Polyfills for the Pokedex Angular application.
  *
- * This file is divided into 2 sections:
- *   1. Browser polyfills. These are applied before loading ZoneJS and are sorted by browsers.
- *   2. Application imports. Files imported after ZoneJS that should be loaded before your main
- *      file.
+ * This file bundles the polyfills required by Angular and provides helpers
+ * and documentation to set Zone.js flags (if needed) before loading Zone.js.
  *
- * The current setup is for so-called "evergreen" browsers; the last versions of browsers that
- * automatically update themselves. This includes Safari >= 10, Chrome >= 55 (including Opera),
- * Edge >= 13 on the desktop, and iOS 10 and Chrome on mobile.
+ * Keep behavior identical: Zone.js is imported below and remains required.
+ * If you need to set Zone flags to control patching behavior, create a
+ * separate file (for example: zone-flags.ts) and import it before this file
+ * so flags are applied prior to Zone.js being loaded.
  *
- * Learn more in https://angular.io/guide/browser-support
+ * See Angular guide: https://angular.io/guide/browser-support
  */
 
 /***************************************************************************************************
@@ -20,42 +18,88 @@
 
 /**
  * IE11 requires the following for NgClass support on SVG elements
+ * Uncomment if you need to support IE11 and install the polyfill:
+ *   npm install --save classlist.js
  */
-// import 'classlist.js';  // Run `npm install --save classlist.js`.
+// import 'classlist.js';
 
 /**
  * Web Animations `@angular/platform-browser/animations`
- * Only required if AnimationBuilder is used within the application and using IE/Edge or Safari.
- * Standard animation support in Angular DOES NOT require any polyfills (as of Angular 6.0).
+ * Only required if AnimationBuilder is used within the application and using
+ * IE/Edge or Safari. Standard animation support in Angular DOES NOT require
+ * any polyfills (as of Angular 6.0).
  */
-// import 'web-animations-js';  // Run `npm install --save web-animations-js`.
+// import 'web-animations-js';
 
 /**
- * By default, zone.js will patch all possible macroTask and DomEvents
- * user can disable parts of macroTask/DomEvents patch by setting following flags
- * because those flags need to be set before `zone.js` being loaded, and webpack
- * will put import in the top of bundle, so user need to create a separate file
- * in this directory (for example: zone-flags.ts), and put the following flags
- * into that file, and then add the following code before importing zone.js.
- * import './zone-flags';
+ * Zone.js flag helpers
  *
- * The flags allowed in zone-flags.ts are listed here.
+ * Zone.js patches many browser APIs by default. If you need to disable some
+ * of those patches, set the appropriate flags on the global object before
+ * Zone.js is loaded. The recommended approach is to create a separate
+ * file (e.g. `zone-flags.ts`) that calls applyZoneFlags(...) and import that
+ * file before importing Zone.js.
  *
- * The following flags will work for all browsers.
+ * Example (in a separate zone-flags.ts):
  *
- * (window as any).__Zone_disable_requestAnimationFrame = true; // disable patch requestAnimationFrame
- * (window as any).__Zone_disable_on_property = true; // disable patch onProperty such as onclick
- * (window as any).__zone_symbol__UNPATCHED_EVENTS = ['scroll', 'mousemove']; // disable patch specified eventNames
+ *   import { applyZoneFlags } from './polyfills';
  *
- *  in IE/Edge developer tools, the addEventListener will also be wrapped by zone.js
- *  with the following flag, it will bypass `zone.js` patch for IE/Edge
+ *   applyZoneFlags({
+ *     disableRequestAnimationFrame: true,
+ *     disableOnProperty: true,
+ *     unpatchedEvents: ['scroll', 'mousemove']
+ *   });
  *
- *  (window as any).__Zone_enable_cross_context_check = true;
- *
+ * Then import './zone-flags'; before importing Zone.js to ensure flags are
+ * effective.
  */
+
+/**
+ * A typed representation of commonly used flags for Zone.js configuration.
+ */
+export interface ZoneFlags {
+  /** disable patch for requestAnimationFrame */
+  disableRequestAnimationFrame?: boolean;
+  /** disable patch for onProperty such as onclick */
+  disableOnProperty?: boolean;
+  /** list of event names that Zone.js should not patch */
+  unpatchedEvents?: string[];
+  /** enable cross context check for IE/Edge devtools */
+  enableCrossContextCheck?: boolean;
+}
+
+/**
+ * Apply Zone.js flags on the global object. This function does not import
+ * Zone.js; call it from a separate module that is imported before Zone.js
+ * so flags take effect.
+ */
+export function applyZoneFlags(flags: ZoneFlags): void {
+  if (!flags) {
+    return;
+  }
+
+  const globalRef = (window as any) || globalThis as any;
+
+  if (flags.disableRequestAnimationFrame) {
+    globalRef.__Zone_disable_requestAnimationFrame = true;
+  }
+
+  if (flags.disableOnProperty) {
+    globalRef.__Zone_disable_on_property = true;
+  }
+
+  if (Array.isArray(flags.unpatchedEvents) && flags.unpatchedEvents.length) {
+    globalRef.__zone_symbol__UNPATCHED_EVENTS = flags.unpatchedEvents.slice();
+  }
+
+  if (flags.enableCrossContextCheck) {
+    globalRef.__Zone_enable_cross_context_check = true;
+  }
+}
 
 /***************************************************************************************************
  * Zone JS is required by default for Angular itself.
+ * The import must remain; removing or reordering it will change runtime behavior.
  */
 import 'zone.js/dist/zone';  // Included with Angular CLI.
 
