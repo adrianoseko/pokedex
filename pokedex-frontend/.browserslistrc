@@ -1,11 +1,11 @@
-# This file is used by the build system to adjust CSS and JS output to support the specified browsers below.
-# For additional information regarding the format and rule options, please see:
+# Browserslist configuration for the Pokedex frontend
+# This file is used by the build system to control CSS and JS output
+# so the generated bundles target the browsers listed below.
+# For details on query format and available options, see:
 # https://github.com/browserslist/browserslist#queries
-
-# For the full list of supported browsers by the Angular framework, please see:
+# For Angular-specific supported browsers, see:
 # https://angular.io/guide/browser-support
-
-# You can see what browsers were selected by your queries by running:
+# To see which browsers match these queries locally, run:
 #   npx browserslist
 
 last 1 Chrome version
