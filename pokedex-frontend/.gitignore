@@ -1,16 +1,18 @@
+# .gitignore for pokedex-frontend
 # See http://help.github.com/ignore-files/ for more about ignoring files.
 
-# compiled output
+# Build / compiled output
 /dist
 /tmp
 /out-tsc
+
 # Only exists if Bazel was run
 /bazel-out
 
-# dependencies
+# Dependencies
 /node_modules
 
-# profiling files
+# Profiling files
 chrome-profiler-events*.json
 speed-measure-plugin*.json
 
@@ -31,7 +33,7 @@ speed-measure-plugin*.json
 !.vscode/extensions.json
 .history/*
 
-# misc
+# Misc
 /.sass-cache
 /connect.lock
 /coverage
@@ -41,6 +43,6 @@ yarn-error.log
 testem.log
 /typings
 
-# System Files
+# System files
 .DS_Store
 Thumbs.db
