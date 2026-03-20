@@ -1,27 +1,80 @@
 # PokedexFrontend
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 11.2.12.
+This project was generated with the Angular CLI (version 11.2.12).
+
+## Table of contents
+
+- [Prerequisites](#prerequisites)
+- [Development server](#development-server)
+- [Code scaffolding](#code-scaffolding)
+- [Build](#build)
+- [Running unit tests](#running-unit-tests)
+- [Running end-to-end tests](#running-end-to-end-tests)
+- [Further help](#further-help)
+
+## Prerequisites
+
+- Node.js and npm installed
+- (Optional) Angular CLI — v11.2.12 recommended
 
 ## Development server
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+Start a local development server:
+
+```
+ng serve
+```
+
+Navigate to http://localhost:4200/. The app will automatically reload when you change source files.
 
 ## Code scaffolding
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+Generate components, directives, pipes, services and other Angular artifacts with the CLI:
+
+```
+ng generate component component-name
+```
+
+You can also generate any of the following:
+
+```
+ng generate directive|pipe|service|class|guard|interface|enum|module
+```
 
 ## Build
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+Build the project:
+
+```
+ng build
+```
+
+The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
 
 ## Running unit tests
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+Run unit tests via Karma:
+
+```
+ng test
+```
 
 ## Running end-to-end tests
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+Run end-to-end tests via Protractor:
+
+```
+ng e2e
+```
 
 ## Further help
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+For more help on the Angular CLI, run:
+
+```
+ng help
+```
+
+Or consult the Angular CLI Overview and Command Reference:
+
+https://angular.io/cli
