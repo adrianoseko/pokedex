@@ -1,4 +1,7 @@
-/* To learn more about this file see: https://angular.io/config/tsconfig. */
+/*
+  TypeScript configuration for the Angular frontend.
+  For details, see: https://angular.io/config/tsconfig
+*/
 {
   "compileOnSave": false,
   "compilerOptions": {
