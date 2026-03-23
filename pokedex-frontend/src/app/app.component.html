@@ -1,1 +1,12 @@
-<div class="bgd"><router-outlet></router-outlet></div>
+<!--
+  App root template.
+  - Keeps router-outlet as the single routing anchor.
+  - Styling container uses "app-root-content" for clearer naming while preserving existing "bgd" class for backward compatibility.
+  Developer notes:
+  - Backend must restrict allowed origins to known frontend origins using environment-driven origin lists.
+  - Add authentication/authorization for write endpoints; enforce on the server side.
+  - Rotate secrets via secure storage (e.g., HashiCorp Vault, AWS Secrets Manager) and avoid hardcoding secrets in code or config.
+-->
+<main class="app-root-content bgd" role="main" aria-live="polite">
+  <router-outlet></router-outlet>
+</main>
