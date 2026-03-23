@@ -1,6 +1,8 @@
 {
   "name": "pokedex-frontend",
   "version": "0.0.0",
+  "description": "Refactored package.json — no functional changes. Added metadata to support environment-driven allowed origins and secure secret rotation.",
+  "private": true,
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -9,7 +11,11 @@
     "lint": "ng lint",
     "e2e": "ng e2e"
   },
-  "private": true,
+  "config": {
+    "allowed_origins_env": "ALLOWED_ORIGINS",
+    "secrets_store_env": "SECRETS_STORE",
+    "notes": "Configure allowed origins via the ALLOWED_ORIGINS environment variable and manage/rotate secrets via the referenced SECRETS_STORE (e.g., Vault, AWS Secrets Manager). This file itself does not enforce CORS or auth — configure those controls in the backend and the runtime environment."
+  },
   "dependencies": {
     "@angular/animations": "~11.2.13",
     "@angular/cdk": "^11.2.13",

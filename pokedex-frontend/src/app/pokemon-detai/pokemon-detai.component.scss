@@ -1,56 +1,68 @@
-// spinner style
+/*
+ * pokemon-detai.component.scss
+ * Refactored for clarity and maintainability while preserving exact behavior.
+ */
 
+// -- Variables ---------------------------------------------------------------
+$spinner-stroke: #000;
+$spinner-stroke-alt: gray;
+$spinner-width: 100%;
+$spinner-height: 70px;
+$font-logo-family: "Russo One";
+
+// spinner style
+// Keep the initial animation:none rule first so later overrides behave the same.
 :host ::ng-deep .custom-spinner .p-progress-spinner-circle {
-    animation: none;
-    stroke: #000;
+  animation: none;
+  stroke: $spinner-stroke;
 }
 
 .frames {
-    margin-left: auto;
-    margin-right: auto;
-    max-width: 600px;
-    margin-top: 20px;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 600px;
+  margin-top: 20px;
 }
 
 .p-progress-spinner-circle {
-    stroke: black;
+  stroke: black;
 }
 
+// This later rule intentionally overrides the earlier .custom-spinner .p-progress-spinner-circle
+// to preserve the original cascade and final computed styles.
 :host ::ng-deep .custom-spinner .p-progress-spinner-circle {
-    animation: custom-progress-spinner-color;
-    width: 100% !important;
-    height: 70px !important;
-    margin-top: 60% !important;
+  animation: custom-progress-spinner-color;
+  width: $spinner-width !important;
+  height: $spinner-height !important;
+  margin-top: 60% !important;
 }
-
 
 @keyframes p-progress-spinner-color {
+  100%,
+  0% {
+    stroke: black !important;
+  }
 
-    100%,
-    0% {
-        stroke: black !important;
-    }
+  40% {
+    stroke: gray !important;
+  }
 
-    40% {
-        stroke: gray !important;
-    }
+  66% {
+    stroke: black !important;
+  }
 
-    66% {
-        stroke: black !important;
-    }
-
-    80%,
-    90% {
-        stroke: gray !important;
-    }
+  80%,
+  90% {
+    stroke: gray !important;
+  }
 }
 
 .font-logo {
-    text-decoration: none;
-    width: 100%;
-    color: white;
-    text-align: center !important;
-    font-family: "Russo One";
-    font-size: larger;
-    text-transform: uppercase;
+  text-decoration: none;
+  width: 100%;
+  color: white;
+  text-align: center !important;
+  font-family: $font-logo-family;
+  font-size: larger;
+  text-transform: uppercase;
 }

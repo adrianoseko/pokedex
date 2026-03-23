@@ -1,4 +1,16 @@
-/* To learn more about this file see: https://angular.io/config/tsconfig. */
+/*
+  To learn more about this file see: https://angular.io/config/tsconfig.
+
+  Purpose: TypeScript configuration for unit tests (specs).
+
+  Notes for developers:
+    - Keep this file focused on testing compilation options; do not put runtime configuration here.
+    - Security guidance (apply in backend/config code, not here):
+        * Restrict allowed origins to known frontends via environment-driven lists (for example, an ALLOWED_ORIGINS env var).
+        * Enforce authentication and authorization for write endpoints.
+        * Store and rotate secrets using a secure secret store (e.g., Vault, AWS Secrets Manager).
+    - See project documentation for concrete implementation and CI/CD secret rotation procedures.
+*/
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {

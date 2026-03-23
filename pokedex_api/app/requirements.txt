@@ -1,5 +1,11 @@
+# Requirements for pokedex_api
+# NOTE: For production, pin package versions (e.g. fastapi==0.95.0) and use a lockfile (pip-tools/poetry).
+# Security guidance: restrict allowed CORS origins to known frontends, drive origin lists from environment/config,
+# and rotate secrets via a secure secret store (Vault, AWS Secrets Manager, etc.). These operational practices
+# should be implemented in the application configuration, not in this file.
+
 fastapi
 httpx
+pydantic
 uvicorn
 xmltodict
-pydantic

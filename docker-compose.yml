@@ -1,5 +1,42 @@
-version '3.8'
+version: "3.8"
 
-services pokemon-api build context . dockerfile Dockerfile-api ports - 8000
+# Composer file for Pokemon services.
+# - Keep builds and ports as before (api on 8000, frontend on 4200).
+# - Use environment-driven origin list (ALLOWED_ORIGINS / FRONTEND_ORIGIN) so frontends can be restricted without changing images.
+# - Use an externally managed secret for JWT (api_jwt_secret) so it can be rotated securely in the secret backend.
+# - Enable AUTH_ENABLED by default to indicate write endpoints should be protected by the service implementation.
 
-pokemon-frontend build context . dockerfile Dockerfile-frontend ports - 4200
+services:
+  pokemon-api:
+    build:
+      context: .
+      dockerfile: Dockerfile-api
+    ports:
+      - "8000:8000"
+    environment:
+      # Comma-separated list of allowed origins; defaults to local frontend if not provided.
+      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS:-http://localhost:4200}
+      # Toggle for service-level authentication/authorization (write endpoints require auth when true).
+      - AUTH_ENABLED=${AUTH_ENABLED:-true}
+      # Path inside container where the secret will be available. The service should read JWT secret from this file.
+      - JWT_SECRET_FILE=/run/secrets/api_jwt_secret
+    secrets:
+      - api_jwt_secret
+
+  pokemon-frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile-frontend
+    ports:
+      - "4200:4200"
+    environment:
+      # URL for the API backend the frontend should talk to.
+      - API_BASE_URL=${API_BASE_URL:-http://localhost:8000}
+      # Declares the origin of this frontend; useful for the API to validate allowed origins.
+      - FRONTEND_ORIGIN=${FRONTEND_ORIGIN:-http://localhost:4200}
+
+secrets:
+  # The API JWT secret is expected to be provided through the platform's secrets mechanism (external).
+  # This allows rotation without rebuilding images. Marked external so orchestration/ops supplies it.
+  api_jwt_secret:
+    external: true

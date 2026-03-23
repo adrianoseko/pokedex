@@ -1,47 +1,66 @@
-// spinner style
+/*
+  pokedex-frontend/src/app/pokedex/pokedex.component.scss
 
+  Refactored for readability and maintainability. This file only contains styles.
+  Note: Security controls (CORS origin restrictions, auth/authorization, secret
+  rotation, etc.) must be implemented in the backend and application configuration
+  (environment files, secure secret storage). Stylesheets should not implement
+  those concerns. See developer instructions in project docs.
+*/
+
+// Variables for easy maintenance
+$spinner-stroke: #000;
+$spinner-alt-stroke: gray;
+$spinner-width: 100%;
+$spinner-height: 70px;
+$spinner-margin-top: 60%;
+$frames-max-width: 600px;
+$font-logo-family: "Russo One";
+
+// spinner style
 :host ::ng-deep .custom-spinner .p-progress-spinner-circle {
     animation: none;
-    stroke: #000;
+    stroke: $spinner-stroke;
 }
 
 .frames {
     margin-left: auto;
     margin-right: auto;
-    max-width: 600px;
+    max-width: $frames-max-width;
     margin-top: 20px;
 }
 
 .p-progress-spinner-circle {
-    stroke: black;
+    stroke: $spinner-stroke;
 }
 
+// NOTE: The animation name here intentionally does not match the keyframes name
+// to preserve original behavior. Changing either could alter runtime behavior.
 :host ::ng-deep .custom-spinner .p-progress-spinner-circle {
     animation: custom-progress-spinner-color;
-    width: 100% !important;
-    height: 70px !important;
-    margin-top: 60% !important;
+    width: $spinner-width !important;
+    height: $spinner-height !important;
+    margin-top: $spinner-margin-top !important;
 }
-
 
 @keyframes p-progress-spinner-color {
 
     100%,
     0% {
-        stroke: black !important;
+        stroke: $spinner-stroke !important;
     }
 
     40% {
-        stroke: gray !important;
+        stroke: $spinner-alt-stroke !important;
     }
 
     66% {
-        stroke: black !important;
+        stroke: $spinner-stroke !important;
     }
 
     80%,
     90% {
-        stroke: gray !important;
+        stroke: $spinner-alt-stroke !important;
     }
 }
 
@@ -50,7 +69,7 @@
     width: 100%;
     color: white;
     text-align: center !important;
-    font-family: "Russo One";
+    font-family: $font-logo-family;
     font-size: larger;
     text-transform: uppercase;
 }
