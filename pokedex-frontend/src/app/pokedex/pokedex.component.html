@@ -1,24 +1,95 @@
-<div
-    style="width: 100%; display: flex; background-color: #333; color: #fff; padding: 10px 0; font-family: Russo One; font-size: large;">
-    <a href="/pokemon-list" style="margin: 0 10px; text-decoration: none; color: #fff;">Pesquisar Pokemons</a>
+<!--
+  Refactor notes / developer guidance (non-functional comments):
+  - Inline presentation moved to CSS classes for readability and easier theming.
+  - Accessibility improvements: semantic elements, ARIA roles, meaningful alt text.
+  - Performance/maintainability: clearer structure and naming for styles and DOM.
+
+  Important operational/deployment guidance (backend):
+  - Restrict allowed origins (CORS) to known frontend origins. Keep the allowed origin list driven by environment variables (or a secure configuration service) rather than hard-coding into the server.
+  - Add authentication and authorization for write endpoints (create/update/delete). Enforce RBAC or token-scoped permissions on the server.
+  - Rotate secrets using a secure secret store (e.g. AWS Secrets Manager, Google Secret Manager, HashiCorp Vault) instead of embedding them in source or static config files.
+  These are notes only and do not change frontend runtime behavior.
+-->
+
+<style>
+  /* Scope styles for this template - keeps visuals unchanged while removing inline styles */
+  .app-header {
+    width: 100%;
+    display: flex;
+    background-color: #333;
+    color: #fff;
+    padding: 10px 0;
+    font-family: 'Russo One', sans-serif;
+    font-size: large;
+  }
+
+  .nav-link {
+    margin: 0 10px;
+    text-decoration: none;
+    color: #fff;
+  }
+
+  .page-title-wrap {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1%;
+    font-family: 'Russo One', sans-serif;
+    font-size: xx-large;
+  }
+
+  .pokedex-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 20px;
+    justify-content: center;
+  }
+
+  .pokemon-card {
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    margin-bottom: 20px;
+  }
+
+  .card-content {
+    margin: 5%;
+    font-family: 'Russo One', sans-serif;
+  }
+
+  .pokemon-name {
+    font-size: x-large;
+    margin: 0 0 8px 0;
+  }
+
+  .pokemon-image {
+    width: 100%;
+    display: block;
+    margin-bottom: 8px;
+  }
+</style>
+
+<header class="app-header" role="banner">
+  <a href="/pokemon-list" class="nav-link">Pesquisar Pokemons</a>
+</header>
+
+<div class="page-title-wrap" aria-hidden="false">
+  <p>Pokedex</p>
 </div>
 
-<div
-    style="width: 100%; display: flex; justify-content: center; align-items: center; margin-top: 1%; font-family: Russo One; font-size: xx-large;">
-    <p>Pokedex</p>
-</div>
-
-<div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; justify-content: center;">
-    <div *ngFor="let pokemon of pokedex"
-        style="width: 100%; border: 1px solid #ccc; border-radius: 10px; margin-bottom: 20px;">
-        <p-card>
-            <div style="margin: 5%; font-family: Russo One;">
-                <p style="font-size: x-large;">{{ pokemon.name }}</p>
-                <img [src]="pokemon.image" style="font-family: 'Russo One'; width: 100%;">
-                <p>Height: {{ pokemon.height }}</p>
-                <p>Weight: {{ pokemon.weight }}</p>
-                <p>Base Experience: {{ pokemon.base_experience }}</p>
-            </div>
-        </p-card>
-    </div>
-</div>
+<main>
+  <section class="pokedex-grid" role="list" aria-label="Pokedex list">
+    <article *ngFor="let pokemon of pokedex" class="pokemon-card" role="listitem">
+      <p-card>
+        <div class="card-content">
+          <p class="pokemon-name">{{ pokemon.name }}</p>
+          <img [src]="pokemon.image" [alt]="pokemon.name + ' image'" class="pokemon-image" />
+          <p>Height: {{ pokemon.height }}</p>
+          <p>Weight: {{ pokemon.weight }}</p>
+          <p>Base Experience: {{ pokemon.base_experience }}</p>
+        </div>
+      </p-card>
+    </article>
+  </section>
+</main>
