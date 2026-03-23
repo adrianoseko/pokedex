@@ -120,6 +120,26 @@
             }
           }
         }
+      },
+      "security": {
+        "description": "Non-functional metadata to drive runtime security decisions. This section does not alter Angular CLI behavior. Backend and deployment must enforce these policies.",
+        "allowedOriginsEnvVar": "ALLOWED_FRONTEND_ORIGINS",
+        "allowedOrigins": [
+          "https://app.example.com",
+          "https://staging.app.example.com"
+        ],
+        "auth": {
+          "writeEndpointsRequireAuth": true,
+          "authProvider": "OAuth2",
+          "tokenStorage": "secure-vault",
+          "tokenRotationPolicy": "rotate_every_24h",
+          "note": "Client should obtain short-lived tokens from the secure storage/vault. Backend must enforce authentication and authorization for all state-changing endpoints."
+        },
+        "devRecommendations": {
+          "useProxyForLocalDev": true,
+          "proxyConfigFile": "proxy.conf.json",
+          "note": "Configure dev proxy to attach auth headers or to forward to an auth-enabled backend. Use environment variables for origin lists and read secrets from a secure vault (e.g. HashiCorp Vault, AWS Secrets Manager)."
+        }
       }
     }
   },
