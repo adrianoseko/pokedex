@@ -1,6 +1,11 @@
-# Editor configuration, see https://editorconfig.org
+# EditorConfig for pokedex-frontend
+# See https://editorconfig.org for documentation.
+# This file defines coding style conventions for the repository.
+# Keep settings purposefully stable to avoid changing developer/editor behavior.
+
 root = true
 
+# Default settings for all files
 [*]
 charset = utf-8
 indent_style = space
@@ -8,9 +13,11 @@ indent_size = 2
 insert_final_newline = true
 trim_trailing_whitespace = true
 
+# TypeScript files: prefer single quotes (non-standard property intentionally kept)
 [*.ts]
 quote_type = single
 
+# Markdown files: allow long lines and preserve trailing whitespace where needed
 [*.md]
 max_line_length = off
 trim_trailing_whitespace = false
