@@ -6,20 +6,32 @@
   <title>PokedexFrontend</title>
   <base href="/" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- PrimeIcons stylesheet (kept as a single link import) -->
   <link rel="stylesheet" type="text/css" href="/node_modules/primeicons/primeicons.css" />
+
+  <!-- Application configuration (populated at build time).
+       Expected to be a URL-encoded JSON string. Example:
+       %7B%22allowedOrigins%22%3A%5B%22http%3A%2F%2Flocalhost%3A4200%22%2C%22https%3A%2F%2Fapp.example.com%22%5D%2C%22secretEndpoint%22%3A%22%2F.secrets%22%7D
+       Build systems should replace %APP_CONFIG% with the encoded config. -->
+  <meta name="app-config" content="%APP_CONFIG%">
+
   <style>
+    /* Consolidated font imports; kept to preserve original visual appearance */
     @import url(https://fonts.googleapis.com/css?family=Noto+Sans:400,700,400italic,700italic|Roboto:400,100,100italic,300,300italic,400italic,500,500italic,700,700italic,900,900italic);
     @import url(https://fonts.googleapis.com/css?family=Orbitron);
     @import url(https://fonts.googleapis.com/css?family=RobotoDraft:400,500,700,400italic);
     @import url(https://fonts.googleapis.com/css?family=Raleway:200,300,400,500);
     @import url(https://fonts.googleapis.com/css?family=Russo+One);
     @import url(https://fonts.googleapis.com/css?family=Source+Sans+Pro);
-    @import "primeicons/primeicons.css";
 
     @font-face {
       font-family: 'DigitalDream';
       src: url("../fonts/DIGITALDREAM-webfont.eot");
-      src: url("../fonts/DIGITALDREAM-webfont.eot?#iefix") format("embedded-opentype"), url("../fonts/DIGITALDREAM-webfont.woff") format("woff"), url("../fonts/DIGITALDREAM-webfont.ttf") format("truetype"), url("../fonts/DIGITALDREAM-webfont.svg#digital_dreamregular") format("svg");
+      src: url("../fonts/DIGITALDREAM-webfont.eot?#iefix") format("embedded-opentype"),
+           url("../fonts/DIGITALDREAM-webfont.woff") format("woff"),
+           url("../fonts/DIGITALDREAM-webfont.ttf") format("truetype"),
+           url("../fonts/DIGITALDREAM-webfont.svg#digital_dreamregular") format("svg");
       font-weight: normal;
       font-style: normal;
     }
@@ -48,7 +60,91 @@
       color: inherit;
     }
   </style>
+
   <link rel="icon" type="image/x-icon" href="/assets/imgs/CSM_preto_simbolo.png" />
+
+  <!--
+    Client-side lightweight security helpers
+    - Reads build-time configuration from the app-config meta tag (does not change behavior by default)
+    - Exposes: window.__APP_CONFIG__ and window.AppSecurity helpers
+    - These helpers are non-blocking and only warn by default; they provide a place to integrate
+      origin enforcement and secret retrieval (via a secure backend) when the backend is configured
+      to support rotated secrets and environment-driven origin lists.
+  -->
+  <script>
+    (function () {
+      'use strict';
+
+      function safeParseAppConfig(raw) {
+        if (!raw) return {};
+        try {
+          // Expecting a URL-encoded JSON string populated at build time
+          var decoded = decodeURIComponent(raw);
+          return JSON.parse(decoded);
+        } catch (e) {
+          // Keep behavior unchanged: do not throw, only warn
+          console.warn('[AppConfig] Failed to parse app-config meta tag. Ensure build populates %APP_CONFIG%.', e);
+          return {};
+        }
+      }
+
+      var rawConfig = document.querySelector('meta[name="app-config"]')?.getAttribute('content') || '';
+      var appConfig = safeParseAppConfig(rawConfig);
+
+      // Expose application configuration to the global namespace for other scripts to consume
+      window.__APP_CONFIG__ = appConfig;
+
+      // Lightweight security utility. Non-blocking by default to preserve existing behavior.
+      window.AppSecurity = {
+        allowedOrigins: Array.isArray(appConfig.allowedOrigins) ? appConfig.allowedOrigins : [],
+
+        isOriginAllowed: function () {
+          if (!this.allowedOrigins.length) return true; // no restriction configured
+          try {
+            return this.allowedOrigins.indexOf(location.origin) !== -1;
+          } catch (e) {
+            return false;
+          }
+        },
+
+        // Placeholder helper: retrieve rotated secrets from a secure backend endpoint.
+        // This will attempt to fetch from the configured secretEndpoint if present.
+        // It returns null on failure. This function is a safe, optional helper and is NOT called automatically.
+        getRotatedSecret: async function (secretName) {
+          if (!appConfig.secretEndpoint) return null;
+          var endpoint = '' + appConfig.secretEndpoint + '/' + encodeURIComponent(secretName);
+          try {
+            var resp = await fetch(endpoint, { credentials: 'include' });
+            if (!resp.ok) throw new Error('Failed to retrieve secret: ' + resp.status);
+            return await resp.text();
+          } catch (err) {
+            console.warn('[AppSecurity] getRotatedSecret failed', err);
+            return null;
+          }
+        },
+
+        // Fetch wrapper that can inject an auth token for write operations when configured.
+        // This helper does not change any global behavior unless the application calls it.
+        authorizedFetch: async function (url, options) {
+          options = options || {};
+          var method = (options.method || 'GET').toUpperCase();
+          var isWrite = ['POST', 'PUT', 'PATCH', 'DELETE'].indexOf(method) !== -1;
+          var headers = new Headers(options.headers || {});
+          if (isWrite && appConfig.authToken) {
+            headers.set('Authorization', 'Bearer ' + appConfig.authToken);
+          }
+          var opts = Object.assign({}, options, { headers: headers });
+          return fetch(url, opts);
+        }
+      };
+
+      // Non-blocking warning if enforcement is expressly enabled in the config but origin is not allowed.
+      if (appConfig.enforceOrigins && !window.AppSecurity.isOriginAllowed()) {
+        console.warn('[AppSecurity] The application is running from an unrecognized origin:', location.origin);
+      }
+
+    })();
+  </script>
 </head>
 
 <body>
