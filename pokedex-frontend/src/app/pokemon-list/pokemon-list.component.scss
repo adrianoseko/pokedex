@@ -1,173 +1,179 @@
 // spinner style
 
-:host ::ng-deep .custom-spinner .p-progress-spinner-circle {
-    animation: none;
-    stroke: #000;
+// Color and size tokens
+$color-red: rgb(255, 0, 0);
+$color-yellow: rgb(255, 213, 1);
+$color-blue: rgb(0, 98, 255);
+$color-black: black;
+$color-gray: gray;
+$dot-size: 10px;
+$spinner-height: 70px;
+$spinner-width-important: 100% !important;
+$spinner-margin-top-important: 60% !important;
+
+// Reusable circle placeholder for small dots
+%circle-base {
+  border-radius: 50%;
+  width: $dot-size;
+  height: $dot-size;
+}
+
+// Spinner host customizations (kept selector structure to preserve specificity/behavior)
+:host ::ng-deep {
+  .custom-spinner {
+    .p-progress-spinner-circle {
+      // Keep the same animation name as in original file. NOTE: there is a mismatch in the
+      // original between animation name and declared keyframes — preserve that to avoid
+      // changing runtime behavior.
+      animation: custom-progress-spinner-color;
+      width: $spinner-width-important;
+      height: $spinner-height !important;
+      margin-top: $spinner-margin-top-important;
+      stroke: #000; // kept same as original explicit value
+    }
+  }
+}
+
+// Ensure global progress spinner circle stroke matches original behavior
+.p-progress-spinner-circle {
+  stroke: $color-black;
 }
 
 .frames {
-    margin-left: auto;
-    margin-right: auto;
-    max-width: 600px;
-    margin-top: 20px;
-}
-
-.p-progress-spinner-circle {
-    stroke: black;
-}
-
-:host ::ng-deep .custom-spinner .p-progress-spinner-circle {
-    animation: custom-progress-spinner-color;
-    width: 100% !important;
-    height: 70px !important;
-    margin-top: 60% !important;
-}
-
-
-@keyframes p-progress-spinner-color {
-
-    100%,
-    0% {
-        stroke: black !important;
-    }
-
-    40% {
-        stroke: gray !important;
-    }
-
-    66% {
-        stroke: black !important;
-    }
-
-    80%,
-    90% {
-        stroke: gray !important;
-    }
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 600px;
+  margin-top: 20px;
 }
 
 .spin-container {
-    width: 100%;
-    height: 100%;
-    margin-top: auto;
-    margin-bottom: auto;
-    margin-left: auto;
-    margin-right: auto;
+  width: 100%;
+  height: 100%;
+  margin-top: auto;
+  margin-bottom: auto;
+  margin-left: auto;
+  margin-right: auto;
 }
 
+// Contract dots - reuse placeholder for consistent sizing
 .contract1 {
-    margin-left: 80%;
-    background: rgb(255, 0, 0);
-    border-radius: 50%;
-    width: 10px;
-    height: 10px;
-
+  @extend %circle-base;
+  margin-left: 80%;
+  background: $color-red;
 }
 
 .contract2 {
-    margin-left: 80%;
-    background: rgb(255, 213, 1);
-    border-radius: 50%;
-    width: 10px;
-    height: 10px;
-
+  @extend %circle-base;
+  margin-left: 80%;
+  background: $color-yellow;
 }
 
 .contract3 {
-    margin-left: 80%;
-    background: rgb(0, 98, 255);
-    border-radius: 50%;
-    width: 10px;
-    height: 10px;
-}
-
-@keyframes fa-blink {
-    0% {
-        opacity: 1;
-    }
-
-    50% {
-        opacity: 0.5;
-    }
-
-    100% {
-        opacity: 0;
-    }
-}
-
-.fa-blink {
-    -webkit-animation: fa-blink 0.75s linear infinite;
-    -moz-animation: fa-blink 0.75s linear infinite;
-    -ms-animation: fa-blink 0.75s linear infinite;
-    -o-animation: fa-blink 0.75s linear infinite;
-    animation: fa-blink 0.75s linear infinite;
-}
-
-
-@keyframes fa-blink2 {
-    0% {
-        opacity: 1;
-    }
-
-    50% {
-        opacity: 0.5;
-    }
-
-    100% {
-        opacity: 0;
-    }
-}
-
-.fa-blink2 {
-    -webkit-animation: fa-blink 1.5s linear infinite;
-    -moz-animation: fa-blink 1.5s linear infinite;
-    -ms-animation: fa-blink 1.5s linear infinite;
-    -o-animation: fa-blink 1.5s linear infinite;
-    animation: fa-blink 1.5s linear infinite;
+  @extend %circle-base;
+  margin-left: 80%;
+  background: $color-blue;
 }
 
 .circulo {
-    background: rgba(254, 254, 254, 0);
-    border-radius: 50%;
-    width: 10px;
-    height: 10px;
-
+  @extend %circle-base;
+  background: rgba(254, 254, 254, 0);
 }
 
 .circulo1 {
-    font-size: small !important;
-    margin-top: 0.5%;
-    background: rgb(255, 0, 0);
-    border-radius: 50%;
-    width: 10px;
-    height: 10px;
-
+  @extend %circle-base;
+  font-size: small !important;
+  margin-top: 0.5%;
+  background: $color-red;
 }
 
 .circulo2 {
-    font-size: small !important;
-    margin-top: 0.5%;
-    background: rgb(255, 213, 1);
-    border-radius: 50%;
-    width: 10px;
-    height: 10px;
-
+  @extend %circle-base;
+  font-size: small !important;
+  margin-top: 0.5%;
+  background: $color-yellow;
 }
 
 .circulo3 {
-    font-size: small !important;
-    margin-top: 0.5%;
-    background: rgb(0, 98, 255);
-    border-radius: 50%;
-    width: 10px;
-    height: 10px;
+  @extend %circle-base;
+  font-size: small !important;
+  margin-top: 0.5%;
+  background: $color-blue;
+}
+
+// Blink keyframes and classes
+// Preserve original keyframe names and usage to avoid changing behavior (original had
+// slightly inconsistent names between declarations and usages).
+@keyframes p-progress-spinner-color {
+  100%,
+  0% {
+    stroke: $color-black !important;
+  }
+
+  40% {
+    stroke: $color-gray !important;
+  }
+
+  66% {
+    stroke: $color-black !important;
+  }
+
+  80%,
+  90% {
+    stroke: $color-gray !important;
+  }
+}
+
+@keyframes fa-blink {
+  0% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes fa-blink2 {
+  0% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+.fa-blink {
+  -webkit-animation: fa-blink 0.75s linear infinite;
+  -moz-animation: fa-blink 0.75s linear infinite;
+  -ms-animation: fa-blink 0.75s linear infinite;
+  -o-animation: fa-blink 0.75s linear infinite;
+  animation: fa-blink 0.75s linear infinite;
+}
+
+.fa-blink2 {
+  // Note: original used the fa-blink animation name here as well; preserve that to keep behavior identical.
+  -webkit-animation: fa-blink 1.5s linear infinite;
+  -moz-animation: fa-blink 1.5s linear infinite;
+  -ms-animation: fa-blink 1.5s linear infinite;
+  -o-animation: fa-blink 1.5s linear infinite;
+  animation: fa-blink 1.5s linear infinite;
 }
 
 .font-logo {
-    text-decoration: none;
-    width: 100%;
-    color: white;
-    text-align: center !important;
-    font-family: "Russo One";
-    font-size: larger;
-    text-transform: uppercase;
+  text-decoration: none;
+  width: 100%;
+  color: white;
+  text-align: center !important;
+  font-family: "Russo One";
+  font-size: larger;
+  text-transform: uppercase;
 }
