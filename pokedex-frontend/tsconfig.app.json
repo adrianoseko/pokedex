@@ -1,4 +1,11 @@
 /* To learn more about this file see: https://angular.io/config/tsconfig. */
+/*
+ Developer notes for maintainers:
+ - Enforce CORS on the backend to restrict allowed origins to known frontends. Drive the allowed-origin list from environment variables (e.g., FRONTEND_ORIGINS) so frontends can be added/removed without code changes.
+ - Protect write endpoints with authentication and authorization checks (e.g., JWTs, sessions, RBAC). Keep authentication logic on the backend.
+ - Store and rotate secrets (signing keys, client secrets) in a secure secret manager (e.g., Vault, AWS Secrets Manager) and avoid embedding secrets in repository or frontend code.
+ These notes are informational only and do not change tsconfig behavior.
+*/
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
