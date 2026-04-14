@@ -1,12 +1,16 @@
 import os
 import json
 import logging
+import hashlib
+import threading
 from typing import List, Generator, Optional
 
-from fastapi import FastAPI, HTTPException, Depends, status
+from fastapi import FastAPI, HTTPException, Depends, status, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
+from sqlalchemy.exc import IntegrityError
 import xmltodict
 
 from utils import fetch_pokemon_data, fetch_pokemon_details
@@ -14,63 +18,113 @@ from xml_export import export_to_xml
 from models import PokemonApi, PokemonModel, Pokemon
 from database import SessionLocal  # assuming SessionLocal is defined in database.py
 
-# Configure logging
-logger = logging.getLogger("pokedex_api")
-logging.basicConfig(level=logging.INFO)
+# Module logger (do NOT configure global logging here; application entrypoint should configure handlers)
+logger = logging.getLogger("pokedex_api.app")
 
-# Security: HTTP Bearer for write operations
+# Security bearer scheme for write operations
 bearer_scheme = HTTPBearer(auto_error=False)
 
 
 class SecretStore:
     """
-    Simple secret loader that supports environment-driven secrets and
-    optional file-backed rotated secrets. Designed so rotation can be
-    achieved by updating the external secure file.
+    Secret loader supporting environment-provided tokens and an optional
+    file-backed rotation list. This implementation adds caching of the
+    rotation file to avoid repeated I/O and allows optional precedence
+    behavior via environment configuration.
 
-    Implementation notes:
-    - Primary source: environment variable WRITE_TOKENS (comma-separated)
-    - Optional rotated secrets file: path provided in SECRET_STORE_PATH env var.
-      The file should contain JSON with key `write_tokens` as a list of tokens.
+    Behavior (configurable via env vars):
+    - WRITE_TOKENS: comma-separated tokens from environment (default behavior preserved)
+    - SECRET_STORE_PATH: optional path to JSON file containing write tokens
+      in key `write_tokens` or `tokens`.
+    - SECRET_STORE_REPLACE_ENV: if set to "1" or "true" (case-insensitive),
+      then file tokens will replace environment tokens. Otherwise, tokens are merged
+      with env tokens kept first (preserves legacy behavior).
 
-    This keeps behavior simple and readable while enabling secret rotation
-    via updating the external file (secure storage) without code changes.
+    The rotation file is cached and only reloaded when its modification time (mtime)
+    changes.
     """
 
     ENV_VAR = "WRITE_TOKENS"
     ROTATION_PATH_ENV = "SECRET_STORE_PATH"
+    REPLACE_ENV_VAR = "SECRET_STORE_REPLACE_ENV"
 
     def __init__(self) -> None:
         self._env_tokens = self._load_from_env()
         self._rotation_path = os.getenv(self.ROTATION_PATH_ENV)
+        self._replace_env = os.getenv(self.REPLACE_ENV_VAR, "").lower() in ("1", "true", "yes")
+
+        # Cache for file-based tokens
+        self._file_tokens: List[str] = []
+        self._file_mtime: Optional[float] = None
+        self._cache_lock = threading.Lock()
 
     def _load_from_env(self) -> List[str]:
         raw = os.getenv(self.ENV_VAR, "")
         tokens = [t.strip() for t in raw.split(",") if t.strip()]
         return tokens
 
-    def _load_from_file(self) -> List[str]:
+    def _read_file_tokens(self) -> List[str]:
         if not self._rotation_path:
             return []
+
         try:
-            with open(self._rotation_path, "r", encoding="utf-8") as fh:
-                data = json.load(fh)
-            tokens = data.get("write_tokens") or data.get("tokens") or []
-            if isinstance(tokens, list):
-                return [t for t in tokens if isinstance(t, str) and t]
-            return []
+            stat = os.stat(self._rotation_path)
+            mtime = stat.st_mtime
         except FileNotFoundError:
-            logger.warning("Secret rotation file not found at %s", self._rotation_path)
+            logger.debug("Secret rotation file not found at %s", self._rotation_path)
             return []
         except Exception:
-            logger.exception("Failed to load rotated secrets from file")
+            logger.exception("Unable to stat secret rotation file: %s", self._rotation_path)
             return []
 
+        # If cached and mtime unchanged, return cached
+        with self._cache_lock:
+            if self._file_mtime == mtime and self._file_tokens:
+                return list(self._file_tokens)
+
+            # Otherwise, reload
+            try:
+                with open(self._rotation_path, "r", encoding="utf-8") as fh:
+                    data = json.load(fh)
+                tokens = data.get("write_tokens") or data.get("tokens") or []
+                if isinstance(tokens, list):
+                    sanitized = [t for t in tokens if isinstance(t, str) and t]
+                else:
+                    sanitized = []
+
+                # update cache
+                self._file_tokens = sanitized
+                self._file_mtime = mtime
+                return list(self._file_tokens)
+            except json.JSONDecodeError:
+                logger.exception("Rotation file contains invalid JSON: %s", self._rotation_path)
+                return []
+            except FileNotFoundError:
+                # Race: file removed after stat
+                logger.debug("Rotation file disappeared while reading: %s", self._rotation_path)
+                self._file_tokens = []
+                self._file_mtime = None
+                return []
+            except Exception:
+                logger.exception("Failed to load rotated secrets from file: %s", self._rotation_path)
+                return []
+
     def get_write_tokens(self) -> List[str]:
-        # Always return a merged list so operators can rotate by updating
-        # the rotation file without removing env values.
-        file_tokens = self._load_from_file()
-        return list(dict.fromkeys(self._env_tokens + file_tokens))
+        """Return the effective list of write tokens according to precedence rules.
+
+        Default behavior preserves legacy merging (env tokens followed by file tokens).
+        If SECRET_STORE_REPLACE_ENV is enabled, file tokens take precedence and env tokens
+        are ignored when file tokens exist.
+        """
+        file_tokens = self._read_file_tokens()
+        if self._replace_env:
+            if file_tokens:
+                return list(dict.fromkeys(file_tokens))
+            return list(dict.fromkeys(self._env_tokens))
+
+        # Legacy behavior: env tokens are kept and file tokens appended (deduplicated)
+        merged = list(dict.fromkeys(self._env_tokens + file_tokens))
+        return merged
 
 
 secret_store = SecretStore()
@@ -98,6 +152,14 @@ app.add_middleware(
 )
 
 
+# Centralized exception handler to avoid leaking internal error strings to clients
+@app.exception_handler(Exception)
+async def internal_exception_handler(request, exc: Exception):
+    logger.exception("Unhandled exception while processing request %s %s", getattr(request, "method", "?"), getattr(request, "url", "?"))
+    # Return a generic error message to the client
+    return JSONResponse(status_code=500, content={"detail": "Internal server error"})
+
+
 def get_db() -> Generator[Session, None, None]:
     db = SessionLocal()
     try:
@@ -106,11 +168,24 @@ def get_db() -> Generator[Session, None, None]:
         db.close()
 
 
+def _mask_token_for_logging(token: str) -> str:
+    """Return a non-sensitive identifier for a token (SHA256 hash).
+
+    Logging the raw token is a security risk; instead we log a stable hash.
+    """
+    try:
+        digest = hashlib.sha256(token.encode("utf-8")).hexdigest()
+        return digest
+    except Exception:
+        # Fallback to short prefix (should not happen)
+        return (token[:8] + "...") if token else "<empty>"
+
+
 def authorize_write(credentials: Optional[HTTPAuthorizationCredentials] = Depends(bearer_scheme)) -> None:
     """
     Authorize write operations based on Bearer token.
 
-    Raises HTTPException(401) when missing/invalid token.
+    Raises HTTPException(401/403) when missing/invalid token.
     """
     if credentials is None or not credentials.credentials:
         logger.warning("Missing authorization credentials for write operation")
@@ -119,81 +194,92 @@ def authorize_write(credentials: Optional[HTTPAuthorizationCredentials] = Depend
     token = credentials.credentials
     valid_tokens = secret_store.get_write_tokens()
     if token not in valid_tokens:
-        logger.warning("Unauthorized write attempt with token: %s", token)
+        masked = _mask_token_for_logging(token)
+        logger.warning("Unauthorized write attempt, token_hash=%s", masked)
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Invalid or unauthorized token")
 
 
-# Read endpoints
+# Repository pattern for DB operations
+class PokemonRepository:
+    def __init__(self, session: Session) -> None:
+        self._session = session
+
+    def add(self, pokemon_model: PokemonModel) -> Pokemon:
+        """Create a Pokemon record in the DB. The primary key is generated by the DB.
+
+        We intentionally ignore any client-supplied id to avoid collisions or privilege issues.
+        """
+        db_pokemon = Pokemon(
+            name=pokemon_model.name,
+            height=pokemon_model.height,
+            weight=pokemon_model.weight,
+            url=pokemon_model.url,
+            image=pokemon_model.image,
+            base_experience=pokemon_model.base_experience,
+            type=pokemon_model.type,
+        )
+        self._session.add(db_pokemon)
+        # Commit should be done by caller in a transaction; keeping behavior similar to original
+        self._session.commit()
+        self._session.refresh(db_pokemon)
+        return db_pokemon
+
+    def list_all(self) -> List[Pokemon]:
+        return self._session.query(Pokemon).all()
+
+
+# Helper to fetch and sort pokemons to avoid duplication
+async def fetch_and_sorted_pokemons(limit: int = 100, offset: int = 0) -> List[dict]:
+    pokemons = await fetch_pokemon_data(limit, offset)
+    if isinstance(pokemons, list):
+        pokemons.sort(key=lambda x: x.get("name", ""))
+    return pokemons
+
+
+# Read endpoints (simplified error handling — rely on centralized handler)
 @app.get("/pokemons", response_model=List[PokemonApi])
 async def list_pokemons(limit: int = 100, offset: int = 0):
     """Fetch a list of pokemons from upstream and return them sorted by name."""
-    try:
-        pokemon_list = await fetch_pokemon_data(limit, offset)
-        pokemon_list.sort(key=lambda x: x.get("name", ""))
-        return pokemon_list
-    except HTTPException:
-        raise
-    except Exception as exc:  # preserve behavior but add logging
-        logger.exception("Failed to fetch pokemon list")
-        raise HTTPException(status_code=500, detail=str(exc))
+    pokemon_list = await fetch_and_sorted_pokemons(limit, offset)
+    return pokemon_list
 
 
-@app.get("/pokemon/{id}")
-async def get_pokemon_details_endpoint(id: int):
-    try:
-        details = await fetch_pokemon_details(id)
-        return details
-    except HTTPException:
-        raise
-    except Exception as exc:
-        logger.exception("Failed to fetch pokemon details for id=%s", id)
-        raise HTTPException(status_code=500, detail=str(exc))
+@app.get("/pokemons/{pokemon_id}")
+async def get_pokemon_details_endpoint(pokemon_id: int):
+    """Fetch details about a single pokemon from upstream."""
+    details = await fetch_pokemon_details(pokemon_id)
+    return details
 
 
-@app.get("/pokemon/export/xml")
-async def export_pokemon_to_xml(limit: int = 100, offset: int = 0):
-    try:
-        pokemon_list = await fetch_pokemon_data(limit, offset)
-        pokemon_list.sort(key=lambda x: x.get("name", ""))
-        xml_data = export_to_xml(pokemon_list)
-        # xmltodict.unparse returns a string representation of XML
-        return xmltodict.unparse(xml_data, pretty=True)
-    except HTTPException:
-        raise
-    except Exception as exc:
-        logger.exception("Failed to export pokemon list to XML")
-        raise HTTPException(status_code=500, detail=str(exc))
+@app.get("/pokemons/export/xml")
+async def export_pokemons_to_xml(limit: int = 100, offset: int = 0):
+    """Export a list of pokemons as XML. Returns Content-Type: application/xml."""
+    pokemon_list = await fetch_and_sorted_pokemons(limit, offset)
+    xml_data = export_to_xml(pokemon_list)
+    # xmltodict.unparse returns a string representation of XML
+    xml_string = xmltodict.unparse(xml_data, pretty=True)
+    return Response(content=xml_string, media_type="application/xml")
 
 
-# Write endpoint protected by authorization
-@app.post("/addPokemon/", response_model=PokemonModel)
+# Write endpoint protected by authorization (RESTful path)
+@app.post("/pokemons", response_model=PokemonModel)
 async def create_pokemon(pokemon: PokemonModel, db: Session = Depends(get_db), _auth: None = Depends(authorize_write)):
-    """Create a new Pokemon record in the database. Protected by bearer token authorization."""
+    """Create a new Pokemon record in the database. Protected by bearer token authorization.
+
+    Note: any client-supplied `id` is ignored and the database will generate the primary key.
+    """
+    repo = PokemonRepository(db)
     try:
-        db_pokemon = Pokemon(
-            id=pokemon.id,
-            name=pokemon.name,
-            height=pokemon.height,
-            weight=pokemon.weight,
-            url=pokemon.url,
-            image=pokemon.image,
-            base_experience=pokemon.base_experience,
-            type=pokemon.type,
-        )
-        db.add(db_pokemon)
-        db.commit()
-        db.refresh(db_pokemon)
-        return db_pokemon
-    except Exception as exc:
-        logger.exception("Failed to create pokemon record: %s", getattr(pokemon, "name", None))
-        raise HTTPException(status_code=500, detail=str(exc))
+        created = repo.add(pokemon)
+        return created
+    except IntegrityError:
+        logger.exception("Database integrity error creating pokemon: %s", getattr(pokemon, "name", None))
+        # Do not leak DB details to client
+        raise HTTPException(status_code=400, detail="Failed to create resource due to integrity constraints")
 
 
 @app.get("/pokedex", response_model=List[PokemonModel])
 async def list_pokedex(db: Session = Depends(get_db)):
-    try:
-        pokemon_list = db.query(Pokemon).all()
-        return pokemon_list
-    except Exception as exc:
-        logger.exception("Failed to read pokedex from database")
-        raise HTTPException(status_code=500, detail=str(exc))
+    """List pokedex entries stored in the application's database."""
+    repo = PokemonRepository(db)
+    return repo.list_all()
